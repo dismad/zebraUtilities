@@ -11,6 +11,7 @@ https://zechub.wiki/zebra
 * extractSupplyInfoZebra.sh                  // Extract ZEC supply information
 * txDetailsZebra.sh                          // Display info about any tx via Zebra
 * zebraPeers.sh                              // Display connected peers to your node
+* blockFoundSummaryZebra.sh                  // Display blocks and tx's as they are mined
 ```
 
 ## DEV version
@@ -32,6 +33,11 @@ Input a tx:
 `./zebraPeers.sh`
 
 ![Screenshot_2024-08-31_18-58-02](https://github.com/user-attachments/assets/517e0515-f137-4505-9482-d47e61e6a4ec)
+
+## Block Found Summary
+
+
+![Screenshot_2024-08-31_21-36-59](https://github.com/user-attachments/assets/f2d59591-04d3-4026-9ecc-667926bdc6ba)
 
 
 
