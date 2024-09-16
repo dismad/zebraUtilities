@@ -12,6 +12,7 @@ https://zechub.wiki/zebra
 * txDetailsZebra.sh                          // Display info about any tx via Zebra
 * zebraPeers.sh                              // Display connected peers to your node
 * blockFoundSummaryZebra.sh                  // Display blocks and tx's as they are mined
+* listTXs.sh                                 // List all Tx's in any block interval
 ```
 
 ## DEV version
@@ -39,5 +40,8 @@ Input a tx:
 
 ![Screenshot_2024-08-31_21-36-59](https://github.com/user-attachments/assets/f2d59591-04d3-4026-9ecc-667926bdc6ba)
 
+## ListTXs
+
+![Screenshot_2024-09-16_15-19-12](https://github.com/user-attachments/assets/b488d501-c6da-4bd9-ab25-63d2789e2aaa)
 
 
