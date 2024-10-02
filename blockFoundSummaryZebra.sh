@@ -1,7 +1,31 @@
 #!/bin/bash
 
+#Black        0;30     Dark Gray     1;30
+#Red          0;31     Light Red     1;31
+#Green        0;32     Light Green   1;32
+#Brown/Orange 0;33     Yellow        1;33
+#Blue         0;34     Light Blue    1;34
+#Purple       0;35     Light Purple  1;35
+#Cyan         0;36     Light Cyan    1;36
+#Light Gray   0;37     White         1;37
+
+#RED='\033[0;31m'
+#NC='\033[0m' # No Color
+#echo -e "I ${RED}love${NC} Zcash"
+
+NC='\033[0m'
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+DARKGRAY='\033[1;30m'
+BLUE='\033[0;34m'
+LIGHTPURPLE='\033[1;35m'
+LIGHTBLUE='\033[1;34m'
+ORANGE='\033[0;33m'
+
+
 current_block=$(zcash-cli getblockcount)
-#now=$(zcash-cli getblock $current_block | jq .time)
+now=$(zcash-cli z_gettreestate $current_block | jq .time)
 difficulty=$(zcash-cli getdifficulty)
 
 while true
@@ -17,23 +41,24 @@ do
         difficulty=$(zcash-cli getdifficulty)
 
 	# Record Time
-        #newBlockTime=$(date +%s)
-	#newBlockTime=$(zcash-cli getblock $latest_block | jq .time)
+        newBlockTime=$(date +%s)
+	newBlockTime=$(zcash-cli z_gettreestate $latest_block | jq .time)
 
         #calculate difference.
-        #difference=$(( $newBlockTime - $now ))
+        difference=$(( $newBlockTime - $now ))
 
 
 
         # Divide the difference by 3600 to calculate hours/ 60 for minutes
-        #answer=$(bc <<< "scale=2 ; $difference/60")0
-        #testTime=$(date +%R)
+        answer=$(bc <<< "scale=2 ; $difference/60")0
+        testTime=$(date +%R)
 
 
         # Display message with new block number
         echo
-        echo "New block found! [$answer minutes since last block ($testTime)] (Difficulty: $difficulty)"
+        echo -e "${YELLOW}New block found!${NC} [$answer minutes since last block ($testTime)] (${RED}Difficulty${NC}: ${DARKGRAY}$difficulty${NC})"
 	echo "----------------"
+	
 	
 	# List transaction ID's
         echo
@@ -43,7 +68,7 @@ do
         echo
         
         # Reset Time
-        #now=$newBlockTime
+        now=$newBlockTime
 
 	# loop through TX's of block
         index=$(./listBlockTXs.sh $latest_block | wc -l) 
@@ -85,7 +110,9 @@ do
 
         #echo "This block is $blockSize bytes: [(Header: $headerSize + TXs: $sizeCount) bytes]"
         echo "----------------"
-	echo "This block has "$numTXs" transactions" #of which "$((numTXs-transparentCount))" are shielded"
+	echo -e "${LIGHTPURPLE}This block has ${LIGHTBLUE}$numTXs${NC} transactions${NC}" #of which $shieldedCount are shielded${NC}"
+
+
         #echo "This block has $actionCount orchard actions."
 	#echo "This block has $inputs total inputs."
 	#echo "This block has $outputs total outputs."
