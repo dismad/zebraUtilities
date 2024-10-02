@@ -37,8 +37,8 @@ Input a tx:
 
 ## Block Found Summary
 
+![Screenshot_2024-10-01_23-46-50](https://github.com/user-attachments/assets/a8b96a1a-2448-48e6-aff5-02bb602970ad)
 
-![Screenshot_2024-08-31_21-36-59](https://github.com/user-attachments/assets/f2d59591-04d3-4026-9ecc-667926bdc6ba)
 
 ## ListTXs
 
