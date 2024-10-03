@@ -13,6 +13,7 @@ https://zechub.wiki/zebra
 * zebraPeers.sh                              // Display connected peers to your node
 * blockFoundSummaryZebra.sh                  // Display blocks and tx's as they are mined
 * listTXs.sh                                 // List all Tx's in any block interval
+* getDateFromTX.sh                           // Display Date of inputed TX
 ```
 
 ## DEV version
@@ -44,4 +45,7 @@ Input a tx:
 
 ![Screenshot_2024-09-16_15-19-12](https://github.com/user-attachments/assets/b488d501-c6da-4bd9-ab25-63d2789e2aaa)
 
+## GetDateFromTX
+
+![Screenshot_2024-10-03_11-28-25](https://github.com/user-attachments/assets/bce305b0-a374-424c-8e31-45c0298f5095)
 
