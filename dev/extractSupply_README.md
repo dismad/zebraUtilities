@@ -18,11 +18,13 @@
 
 ## Download scripts 
 
-`chmod +x toCurl.sh extractSupplyZebra.sh`
+Allow them to execute:
+
+`chmod +x toCurl.sh extractSupplyInfoZebraDEV.sh`
 
 
 
 ## Use
 
 
-`./extractSupplyZebra.sh`
+`./extractSupplyInfoZebraDEV.sh`
