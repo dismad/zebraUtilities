@@ -10,7 +10,7 @@ It will download a script, and start the installation. If everything goes well, 
 
 `Rust is installed now. Great!`
 
-On Windows, download and run `rustup-init.exe`. It will start the installation in a console and present the above message on success.
+On Windows, download and run [rustup-init.exe](https://win.rustup.rs/). It will start the installation in a console and present the above message on success.
 
 ## Download and compile Zebrad
 
