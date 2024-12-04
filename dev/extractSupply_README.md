@@ -55,5 +55,5 @@ Allow them to execute:
 
 `./extractSupplyInfoZebraDEV.sh`
 
+![Screenshot_2024-12-03_22-35-42](https://github.com/user-attachments/assets/bac68437-fd1b-4744-b30e-674f7e46cbd4)
 
-![Screenshot_2024-12-03_22-24-12](https://github.com/user-attachments/assets/a4f7eedf-bf61-4caf-a4ce-7e16b9bcbd73)
