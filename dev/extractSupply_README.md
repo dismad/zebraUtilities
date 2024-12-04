@@ -1,6 +1,16 @@
 # How to get lastest Supply info using a Zebra node
 
+## Install RUST
 
+On Linux and macOS systems, this is done as follows:
+
+`curl https://sh.rustup.rs -sSf | sh`
+
+It will download a script, and start the installation. If everything goes well, you’ll see this appear:
+
+`Rust is installed now. Great!`
+
+On Windows, download and run `rustup-init.exe`. It will start the installation in a console and present the above message on success.
 
 ## Download and compile Zebrad
 
