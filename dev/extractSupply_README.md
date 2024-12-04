@@ -44,3 +44,6 @@ Allow them to execute:
 
 
 `./extractSupplyInfoZebraDEV.sh`
+
+
+![Screenshot_2024-12-03_22-24-12](https://github.com/user-attachments/assets/a4f7eedf-bf61-4caf-a4ce-7e16b9bcbd73)
