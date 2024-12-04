@@ -1,4 +1,4 @@
-# How to get lastest Supply info using a Zebra node
+# How to get latest Supply info using a Zebra node
 
 ## Install RUST
 
