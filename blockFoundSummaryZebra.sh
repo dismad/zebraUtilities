@@ -24,42 +24,38 @@ LIGHTBLUE='\033[1;34m'
 ORANGE='\033[0;33m'
 
 
-current_block=$(zcash-cli getblockcount)
-now=$(zcash-cli z_gettreestate $current_block | jq .time)
-difficulty=$(zcash-cli getdifficulty)
+current_block=$(./toCurl.sh getblockcount | jq .result)
+now=$(./toCurl.sh getblockcount | jq .result | xargs ./toCurl.sh getblock | jq .result.time)
+difficulty=$(./toCurl.sh getdifficulty | jq .result)
 
 while true
 do
     # Get latest block count
-    #latest_block=$(zcash-cli getbestblockhash | xargs zcash-cli getblock | jq .height)
-    latest_block=$(zcash-cli getbestblockhash | xargs zcash-cli getblock | jq .tx.[0] | xargs -n1 ./txDetails.sh | jq .height)
+    latest_block=$(./toCurl.sh getbestblockhash | jq .result | xargs ./toCurl.sh getblock | jq .result.height)
     
     # Check if latest block is greater than current block
     if [ "$latest_block" -gt "$current_block" ]
     then
 	# Check for current Difficulty
-        difficulty=$(zcash-cli getdifficulty)
+        difficulty=$(./toCurl.sh getdifficulty | jq .result)
 
 	# Record Time
         newBlockTime=$(date +%s)
-	newBlockTime=$(zcash-cli z_gettreestate $latest_block | jq .time)
+	newBlockTime=$(./toCurl.sh getblock $latest_block | jq .result.time)
 
         #calculate difference.
         difference=$(( $newBlockTime - $now ))
-
-
 
         # Divide the difference by 3600 to calculate hours/ 60 for minutes
         answer=$(bc <<< "scale=2 ; $difference/60")0
         testTime=$(date +%R)
 
-
-        # Display message with new block number
         echo
-        echo -e "${YELLOW}New block found!${NC} [$answer minutes since last block ($testTime)] (${RED}Difficulty${NC}: ${DARKGRAY}$difficulty${NC})"
-	echo "----------------"
-	
-	
+        echo -e "${YELLOW}New block found!${NC}"
+        ./drawBlock.sh "Block $latest_block"
+        echo -e "[$answer minutes since last block ($testTime)] (${RED}Difficulty${NC}: ${DARKGRAY}$difficulty${NC})"
+        echo "----------------"
+
 	# List transaction ID's
         echo
 	echo "Block $latest_block has $(./listBlockTXs.sh $latest_block | wc -l) transactions: "
@@ -77,7 +73,7 @@ do
         #actionCount=0
         #sizeCount=0
         #arrayIndex=0
-        blockSize=$(zcash-cli getblockcount | xargs zcash-cli getblock | jq .size)
+        #blockSize=$(zcash-cli getblockcount | xargs zcash-cli getblock | jq .size)
 
         # Count number of inputs/outputs
         #outputs=$(./listBlockTXs.sh $latest_block | xargs -n1 ./txDetails.sh | jq .vout.[].n | wc -l)
@@ -120,6 +116,6 @@ do
         current_block=$latest_block
         #echo $current_block $numTXs $transparentCount $((numTXs-transparentCount)) $answer $difficulty >> TXSummaryNew.md
     fi   
-    # Wait for 10 seconds before checking again
-    sleep 5
+    # Wait for 1 seconds before checking again
+    sleep 1
 done
