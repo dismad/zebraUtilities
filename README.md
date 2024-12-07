@@ -7,6 +7,7 @@ https://zechub.wiki/zebra
 
 `chmod + x` all .sh files and use as needed.
 
+Can access Zebra RPC's using either `zcash-cli` or `toCurl.sh`. zcashd is being deprecated so use of `zcash-cli` will be phased out for either a new CLI wallet or a custom solution similar to `toCurl.sh`.
 ```
 * extractSupplyInfoZebra.sh                  // Extract ZEC supply information
 * txDetailsZebra.sh                          // Display info about any tx via Zebra
@@ -21,14 +22,16 @@ https://zechub.wiki/zebra
 For the latest updates, check out the dev folder. *They are changed often*
 
 ## Extract Supply Info
-![ds](https://github.com/user-attachments/assets/776ed112-aed8-43c6-940c-21e191e59f38)
+![Screenshot_2024-12-07_12-19-54](https://github.com/user-attachments/assets/be631f5e-ad06-4f40-be81-b339be9bb917)
+
 
 
 
 ## TX Details
 Input a tx:
 
-![dsaf](https://github.com/user-attachments/assets/5e665bec-af8f-4da3-9e77-7e0896a8e23a)
+![Screenshot_2024-12-07_12-19-13](https://github.com/user-attachments/assets/a5f32a28-b704-4610-b998-26f264dbdc8e)
+
 
 
 ## Zebra Peers
