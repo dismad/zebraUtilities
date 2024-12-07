@@ -76,18 +76,18 @@ do
         #blockSize=$(zcash-cli getblockcount | xargs zcash-cli getblock | jq .size)
 
         # Count number of inputs/outputs
-        #outputs=$(./listBlockTXs.sh $latest_block | xargs -n1 ./txDetails.sh | jq .vout.[].n | wc -l)
-	#inputs=$(./listBlockTXs.sh $latest_block | xargs -n1 ./txDetails.sh | jq .vin.[].txid | wc -l)
+        #outputs=$(./listBlockTXs.sh $latest_block | xargs -n1 ./txDetailsZebra.sh | jq .vout.[].n | wc -l)
+	#inputs=$(./listBlockTXs.sh $latest_block | xargs -n1 ./txDetailsZebra.sh | jq .vin.[].txid | wc -l)
 
         # loop through TX's of block
 	#while [[ index -ge 1 ]]
 	#do
 	    # Count size of tx's
-            #size=$(./listBlockTXs.sh $latest_block | jq -s .["$arrayIndex"]  | xargs -n1 ./txDetails.sh | jq .size)
+            #size=$(./listBlockTXs.sh $latest_block | jq -s .["$arrayIndex"]  | xargs -n1 ./txDetailsZebra.sh | jq .size)
             #sizeCount=$(($sizeCount + $size))
 
             # Count number of Orchard Actions
-            #actions=$(./listBlockTXs.sh $latest_block | jq -s .["$arrayIndex"] | xargs -n1 ./txDetails.sh | jq .orchard.actions | jq -r 'length')
+            #actions=$(./listBlockTXs.sh $latest_block | jq -s .["$arrayIndex"] | xargs -n1 ./txDetailsZebra.sh | jq .orchard.actions | jq -r 'length')
             #actionCount=$(($actionCount + $actions))
 
             # Count number of Transparent TX's 
