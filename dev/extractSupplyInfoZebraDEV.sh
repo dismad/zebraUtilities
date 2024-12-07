@@ -17,7 +17,7 @@ echo "Total Sapling supply     : ${b[5]}"
 
 echo "Total Orchard supply     : ${b[7]}"
 
-echo "Total Lockbox supply    : ${b[9]}"
+echo "Total Lockbox supply     : ${b[9]}"
 
 echo "-----------------------------------"
 echo "Total Shielded Supply    : $SSupply"
