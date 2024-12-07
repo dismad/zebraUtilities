@@ -14,7 +14,7 @@ On Windows, download and run [rustup-init.exe](https://win.rustup.rs/). It will 
 
 ## Download and compile Zebrad
 
-`cargo install --git https://github.com/ZcashFoundation/zebra --tag v2.0.1 zebrad`
+`cargo install --git https://github.com/ZcashFoundation/zebra --tag v2.1.0 zebrad`
 
 
 
