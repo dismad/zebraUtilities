@@ -52,3 +52,12 @@ Input a tx:
 
 ![Screenshot_2024-10-03_11-28-25](https://github.com/user-attachments/assets/bce305b0-a374-424c-8e31-45c0298f5095)
 
+## Example
+
+`./listTXs.sh 2742068 2743220 | xargs -n1 ./txDetailsZebra.sh | jq .difficulty | tee -a myDifficulty.md`
+
+![Screenshot_2024-12-07_19-32-56](https://github.com/user-attachments/assets/d76e5a20-5687-4c8f-a326-8983b021d712)
+
+
+
+
