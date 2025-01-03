@@ -43,7 +43,9 @@ You can turn on cookie auth if you want, just add the username and pw in toCurl.
 
 
 ## Download scripts 
-
+* [toCurl](https://github.com/dismad/zebraUtilities/blob/main/dev/toCurl.sh)
+* [extractSupplyInfoZebraDEV](extractSupplyInfoZebraDEV.sh)
+  
 Allow them to execute:
 
 `chmod +x toCurl.sh extractSupplyInfoZebraDEV.sh`
