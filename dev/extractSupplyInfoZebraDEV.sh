@@ -2,7 +2,7 @@
 
 a=($(./toCurl.sh getblockchaininfo | jq .result.valuePools.[].chainValue))
 
-SSupply=$(echo "${a[1]} + ${a[2]} + ${a[3]}" | bc)
+SSupply=$(echo "${a[1]} + ${a[2]} + ${a[3]} + ${a[4]}" | bc)
 TSupply=$(echo "${a[0]} + $SSupply" | bc)
 
 echo
