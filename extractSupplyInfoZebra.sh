@@ -1,26 +1,24 @@
 #!/bin/bash
 
-b=($(./toCurl.sh getblockchaininfo | jq . |  grep 'chainValue": [0-9]+' -Eo)) 
-b=("${b[@]#chainValue}")
+a=($(zcash-cli getblockchaininfo | jq .valuePools.[].chainValue))
 
-SSupply=$(echo "scale=0; ${b[3]} + ${b[5]} + ${b[7]} + ${b[9]}" | bc)
-TSupply=$(echo "scale=0; ${b[1]} + $SSupply" | bc)
+SSupply=$(echo "${a[1]} + ${a[2]} + ${a[3]} + ${a[4]}" | bc)
+TSupply=$(echo "${a[0]} + $SSupply" | bc)
 
 echo
-echo "Total Chain Supply       : $TSupply"
+echo "Total Chain supply:       $TSupply"
 
-echo "Total Transparent supply : ${b[1]}"
+echo "Total Transparent supply: ${a[0]}"
 
-echo "Total Sprout supply      : ${b[3]}"
+echo "Total Sprout supply:      ${a[1]}"
 
-echo "Total Sapling supply     : ${b[5]}"
+echo "Total Sapling supply:     ${a[2]}"
 
-echo "Total Orchard supply     : ${b[7]}"
+echo "Total Orchard supply:     ${a[3]}"
 
-echo "Total Lockbox supply     : ${b[9]}"
+echo "Total Lockbox supply:     ${a[4]}"
 
-echo "-----------------------------------"
-echo "Total Shielded Supply    : $SSupply"
-
+echo "-------------------------------------------"
+echo "Total Shielded supply:    $SSupply"
 
 
