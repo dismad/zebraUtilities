@@ -52,7 +52,7 @@ Input a tx:
 
 ![Screenshot_2024-10-03_11-28-25](https://github.com/user-attachments/assets/bce305b0-a374-424c-8e31-45c0298f5095)
 
-## Example
+## Example1
 
 `./listTXs.sh 2742068 2743220 | xargs -n1 ./txDetailsZebra.sh | jq .difficulty | tee -a myDifficulty.md`
 
@@ -60,6 +60,13 @@ Input a tx:
 
 
 ![myDiff](https://github.com/user-attachments/assets/f0552524-9020-4750-949e-ace9e81f934a)
+
+## Example2
+
+`./toCurl.sh getblockchaininfo | jq .result.upgrades | jq 'to_entries[]' | jq .value.activationheight | xargs -n1 ./getDateFromBlock.sh`
+
+
+![Screenshot_2025-02-13_05-45-08](https://github.com/user-attachments/assets/6739094b-c46b-46a1-aa7e-23d47641ddab)
 
 
 
