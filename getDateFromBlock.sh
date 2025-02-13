@@ -2,7 +2,7 @@
 
 block="${1}"   #1 represent 1st argument
 
-now=$(zcash-cli getblock $block | jq .time)
+now=$(./toCurl.sh getblock $block | jq .result.time)
 
 # Divide the difference by 3600 to calculate hours/ 60 for minutes
 #answer=$(bc <<< "scale=2 ; $now/1")0
