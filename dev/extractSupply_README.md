@@ -59,3 +59,7 @@ Allow them to execute:
 
 ![Screenshot_2024-12-03_22-35-42](https://github.com/user-attachments/assets/bac68437-fd1b-4744-b30e-674f7e46cbd4)
 
+## Video example
+
+https://www.youtube.com/watch?v=Ok9Wa8FNbMA
+
