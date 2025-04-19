@@ -5,15 +5,15 @@ block="${1}"   #1 represent 1st argument
 
 
 
-size=($(zcash-cli getrawmempool | jq -r 'length'))
-currentBlock=($(zcash-cli getblockcount))
+size=($(./toCurl.sh getrawmempool | jq -r 'length'))
+currentBlock=($(./toCurl.sh getblockcount))
 
 
 while true
 do
 	if [[ "$size" -gt 0 ]];then
 
-		a=($(zcash-cli getrawmempool))
+		a=($(./toCurl.sh getrawmempool))
 		numTx=$size
 		a=("${a[@]}")
 
@@ -76,7 +76,7 @@ do
 		echo "No tx's in mempool!"
 	fi
 	sleep 5
-        size=($(zcash-cli getrawmempool | jq -r 'length'))
-        currentBlock=($(zcash-cli getblockcount))
+        size=($(./toCurl.sh getrawmempool | jq -r 'length'))
+        currentBlock=($(./toCurl.sh getblockcount))
         clear
 done
