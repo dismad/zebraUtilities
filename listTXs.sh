@@ -6,7 +6,7 @@ endBlock="${2}"     #2 represent 2st argument
 
 for (( i=startBlock; i<=endBlock; i++ ))
 do 
-        ./toCurl.sh getblock $i | jq .result.tx[]
+        ./toCurl.sh getblock $i | jq .tx[]
 done
 
 
