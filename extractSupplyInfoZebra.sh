@@ -1,6 +1,6 @@
 #!/bin/bash
 
-a=($(zcash-cli getblockchaininfo | jq .valuePools.[].chainValue))
+a=($(./toCurl.sh getblockchaininfo | jq .result.valuePools[].chainValue))
 
 SSupply=$(echo "${a[1]} + ${a[2]} + ${a[3]}" | bc)
 TSupply=$(echo "${a[0]} + $SSupply" | bc)
