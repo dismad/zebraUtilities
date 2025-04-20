@@ -5,6 +5,8 @@ https://zechub.wiki/zebra
 
 ## Prerequisites
 
+***Make sure you are running the latest zebrad for the most up-to-date RPC's!***
+
 `chmod + x` all .sh files and use as needed.
 
 Can access Zebra RPC's using `toCurl.sh`or equivalent.
