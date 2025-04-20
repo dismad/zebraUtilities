@@ -1,3 +1,3 @@
 #!/bin/bash
 
-./toCurl.sh getblockchaininfo | jq .result.blocks
+./toCurl.sh getblockchaininfo | jq .blocks
