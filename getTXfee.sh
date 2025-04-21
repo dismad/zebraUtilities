@@ -57,9 +57,9 @@ nullCheck=$(./txDetails.sh $txID | jq .vin)
 if [[ -n "$nullCheck" ]] && [[ "$nullCheck" != "" ]];then
     isCoinbase=$(./txDetails.sh $txID | jq .vin.[] | grep -o coinbase)
     if [[ "$isCoinbase" = "coinbase" ]];then
-    	vinSum=$(zcash-cli getblocksubsidy | jq .totalblocksubsidy)
+    	vinSum=$(./toCurl.sh getblocksubsidy | jq .totalblocksubsidy)
     	vinSum=$(echo "($vinSum * 100000000)/1" | bc)
-        lockbox=$(zcash-cli getblocksubsidy | jq .lockboxstreams.[].valueZat)
+        lockbox=$(./toCurl.sh getblocksubsidy | jq .lockboxstreams.[].valueZat)
         voutSum=$(echo "$voutSum + $lockbox" | bc )
     else
         if [[ "$nullCheck" == "[]" ]];then
