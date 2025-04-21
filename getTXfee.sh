@@ -39,13 +39,13 @@ if [[ "$lenS" -gt 4 ]] ;then
 fi
 
 #Check vouts
-nullCheck=$(./txDetails.sh $txID | jq .vout.[])
+nullCheck=$(./txDetails.sh $txID | jq .vout[])
 if [[ -n "$nullCheck" ]] && [[ "$nullCheck" != "" ]];then
     #Case were tx has both vins and outs
     if [[ $isSapling -eq 1 ]];then
        isShieldedOut=1
     fi
-    voutSum=$(./txDetails.sh $txID | jq -r '.vout | .[] | .valueZat' | awk '{s+=$1} END {print s}')
+    voutSum=$(./txDetails.sh $txID | jq -r '.vout[] | .valueZat' | awk '{s+=$1} END {print s}')
     #If coinbase, add lockbox portion see line 63
 else
    isShieldedOut=1
@@ -55,11 +55,11 @@ fi
 nullCheck=$(./txDetails.sh $txID | jq .vin)
 
 if [[ -n "$nullCheck" ]] && [[ "$nullCheck" != "" ]];then
-    isCoinbase=$(./txDetails.sh $txID | jq .vin.[] | grep -o coinbase)
+    isCoinbase=$(./txDetails.sh $txID | jq .vin[] | grep -o coinbase)
     if [[ "$isCoinbase" = "coinbase" ]];then
     	vinSum=$(./toCurl.sh getblocksubsidy | jq .totalblocksubsidy)
     	vinSum=$(echo "($vinSum * 100000000)/1" | bc)
-        lockbox=$(./toCurl.sh getblocksubsidy | jq .lockboxstreams.[].valueZat)
+        lockbox=$(./toCurl.sh getblocksubsidy | jq .lockboxstreams[].valueZat)
         voutSum=$(echo "$voutSum + $lockbox" | bc )
     else
         if [[ "$nullCheck" == "[]" ]];then
@@ -74,8 +74,8 @@ if [[ -n "$nullCheck" ]] && [[ "$nullCheck" != "" ]];then
 
 	   while [[ "$index" -lt "$length" ]]
 		   do
-		   	tempIndex=$(./txDetails.sh $txID | jq .vin.[$index].vout)
-		   	vinSum=$(./txDetails.sh $txID | jq .vin.[$index].txid | xargs -n1 ./txDetails.sh | jq .vout.[$tempIndex].valueZat)
+		   	tempIndex=$(./txDetails.sh $txID | jq .vin[$index].vout)
+		   	vinSum=$(./txDetails.sh $txID | jq .vin[$index].txid | xargs -n1 ./txDetails.sh | jq .vout[$tempIndex].valueZat)
 		        echo $vinSum >> temp.md #| awk '{s+=$1} END {print s}')
 		        index=$((($index + 1)))
 		   done
@@ -96,7 +96,7 @@ inValueBalance=0  #vinSum
 if [[ "$isShieldedOut" -eq 1 ]];then
     if [[ "$lenS" -gt 4 ]];then
        echo "here"
-       outValueBalance=$(./txDetails.sh $txID | jq .vjoinsplit.[].vpub_newZat | awk '{s+=$1} END {print s}')
+       outValueBalance=$(./txDetails.sh $txID | jq .vjoinsplit[].vpub_newZat | awk '{s+=$1} END {print s}')
     elif [[ "$isSapling" -eq 1 ]];then
         outValueBalance=$(./txDetails.sh $txID | jq .valueBalanceZat)
     elif [[ -n "$isOrchard" ]] && [[ "$lenO" -gt 4 ]];then
@@ -110,7 +110,7 @@ fi
 #Check vinSum second
 if [[ "$isShieldedIn" -eq 1 ]];then
    #if [ "$lenS" -gt 2 ];then
-   #   vinSum=$(./txDetails.sh $txID | jq .vjoinsplit.[].vpub_newZat)
+   #   vinSum=$(./txDetails.sh $txID | jq .vjoinsplit[].vpub_newZat)
    if [[ "$isSapling" -eq 1 ]];then
        inValueBalance=$(./txDetails.sh $txID | jq .valueBalanceZat)
    elif [[ -n "$isOrchard" ]] && [[ "$lenO" -gt 4 ]];then
