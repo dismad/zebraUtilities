@@ -56,7 +56,7 @@ Input a tx:
 
 ## Example1
 
-`./listTXs.sh 2742068 2743220 | | xargs -n1 ./txDetails.sh | jq .height | xargs -n1 ./toCurl.sh getblock | jq .difficulty | tee -a myDifficulty.md`
+`./listTXs.sh 2742068 2743220 | xargs -n1 ./txDetails.sh | jq .height | xargs -n1 ./toCurl.sh getblock | jq .difficulty | tee -a myDifficulty.md`
 
 ![Screenshot_2024-12-07_19-32-56](https://github.com/user-attachments/assets/d76e5a20-5687-4c8f-a326-8983b021d712)
 
