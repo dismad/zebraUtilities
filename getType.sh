@@ -16,10 +16,10 @@ fi
 
 rawTx=$(./toCurl.sh getrawtransaction $txID 1)
 
-transparent=$(echo $rawTx | jq .vout.[].scriptPubKey.type)
+transparent=$(echo $rawTx | jq .vout[].scriptPubKey.type)
 transparent=("${transparent[@]}")
 
-transparent2=$(echo $rawTx | jq .vin.[].txid | wc -l )
+transparent2=$(echo $rawTx | jq .vin[].txid | wc -l )
 
 sprout=$(echo $rawTx | jq .vjoinsplit)
 sapling1=$(echo $rawTx | jq .vShieldedSpend)
@@ -31,16 +31,16 @@ orchard1=$(echo $rawTx | jq -r '.orchard.actions | select( . != null )')
 # Get Value Out
 valueOut1=$(echo $rawTx | jq .valueBalance)
 valueOut2=$(echo $rawTx | jq .orchard.valueBalance)
-valueOut3=$(echo $rawTx | jq .vout.[].valueZat | paste -sd+ | bc)
+valueOut3=$(echo $rawTx | jq .vout[].valueZat | paste -sd+ | bc)
 
 
 
-isCoinbase=$(./txDetails.sh $txID | jq .vin.[] | grep coinbase)
+isCoinbase=$(./txDetails.sh $txID | jq .vin[] | grep coinbase)
 
 
 
 if [ -n "$isCoinbase" ] && [ "$isCoinbase" != "[]" ];then
-        lockbox=$(./toCurl.sh getblocksubsidy | jq .lockboxstreams.[].valueZat)
+        lockbox=$(./toCurl.sh getblocksubsidy | jq .lockboxstreams[].valueZat)
 else
 	lockbox="0"
 fi
@@ -262,4 +262,3 @@ fi
 
 
 echo -e "${LIGHTRED}$testTime${NC} | ${CYAN}$block${NC} | ${GREEN}$txID${NC} | ${YELLOW}$myTransferCount${NC} | ${RED}$fee${NC}$mypad2 | ${LIGHTPURPLE}$valueOut${NC}$mypad | ${LIGHTBLUE}$myResult${NC}"
-
