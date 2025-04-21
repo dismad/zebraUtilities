@@ -132,3 +132,4 @@ do
     fi   
     # Wait for 1 seconds before checking again
     sleep 1
+done
