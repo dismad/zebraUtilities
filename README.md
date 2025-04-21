@@ -11,12 +11,19 @@ https://zechub.wiki/zebra
 
 Can access Zebra RPC's using `toCurl.sh`or equivalent.
 ```
-* extractSupplyInfoZebra.sh                  // Extract ZEC supply information
-* txDetails.sh                               // Display info about any tx via Zebra
-* zebraPeers.sh                              // Display connected peers to your node
 * blockFoundSummaryZebra.sh                  // Display blocks and tx's as they are mined
+* extractSupplyInfoZebra.sh                  // Extract ZEC supply information
+* getBlockCount.sh                           // Get current amount of mined blocks (Height)
+* getDateFromBlock.sh                        // Get the date/time a given block was mined
+* getDateFromTX.sh                           // Get the date/time a given transaction was mined
+* getTXfee.sh                                // Get the transaction fee of a given txid
+* getType.sh                                 // Get the type of transaction given a txid
+* listBestBlockTXs.sh                        // List the transactions of the top block
+* listBlockTXs.sh                            // List the transactions of a given block
 * listTXs.sh                                 // List all Tx's in any block interval
-* getDateFromTX.sh                           // Display Date of inputed TX
+* txDetails.sh                               // Display detailed info about any txid
+* visualizeMempool.sh                        // View amount/types of txid's in the mempool
+* zebraPeers.sh                              // Display connected peers to your node
 ```
 
 ## DEV version
