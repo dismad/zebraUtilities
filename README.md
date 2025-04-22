@@ -68,7 +68,7 @@ Then run `./visualizeMempool.sh`
 You need the following scripts in a folder:
 ```
 listBlockTXs.sh
-xDetails.sh
+txDetails.sh
 getType.sh
 getTXfee.sh
 drawBlock.sh
