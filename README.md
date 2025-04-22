@@ -74,6 +74,7 @@ getTXfee.sh
 drawBlock.sh
 blockFoundSummary.sh
 ```
+Then run `./blockFoundSummary.sh`
 
 ![Screenshot_2025-04-21_12-55-22](https://github.com/user-attachments/assets/2976eab0-9825-4466-8220-7db46aad4db6)
 
