@@ -34,13 +34,11 @@ For the latest updates, check out the dev folder. *They are changed often*
 ![Screenshot_2024-12-07_12-19-54](https://github.com/user-attachments/assets/be631f5e-ad06-4f40-be81-b339be9bb917)
 
 
-
-
 ## TX Details
 Input a tx:
 
-![Screenshot_2024-12-07_12-19-13](https://github.com/user-attachments/assets/a5f32a28-b704-4610-b998-26f264dbdc8e)
 
+![Screenshot_2025-04-21_17-03-30](https://github.com/user-attachments/assets/8f036760-0022-4a0b-aba0-bdb347ded14d)
 
 
 ## Zebra Peers
@@ -48,14 +46,42 @@ Input a tx:
 
 ![Screenshot_2024-08-31_18-58-02](https://github.com/user-attachments/assets/517e0515-f137-4505-9482-d47e61e6a4ec)
 
+## Visualize Mempool
+You need the following scripts in a folder:
+```
+toCurl.sh
+getType.sh
+txDetails.sh
+getTXfee.sh
+inMempool.sh
+visualizeMempool.sh
+```
+
+Then run `./visualizeMempool.sh`
+
+
+![Screenshot_2025-04-21_10-37-54](https://github.com/user-attachments/assets/ca33eb99-ba86-4c63-b7c2-458eee230a61)
+
+
 ## Block Found Summary
 
-![Screenshot_2024-10-01_23-46-50](https://github.com/user-attachments/assets/a8b96a1a-2448-48e6-aff5-02bb602970ad)
+You need the following scripts in a folder:
+```
+listBlockTXs.sh
+xDetails.sh
+getType.sh
+getTXfee.sh
+drawBlock.sh
+blockFoundSummary.sh
+```
+
+![Screenshot_2025-04-21_12-55-22](https://github.com/user-attachments/assets/2976eab0-9825-4466-8220-7db46aad4db6)
 
 
-## ListTXs
+## ListTXs with getType
 
-![Screenshot_2024-09-16_15-19-12](https://github.com/user-attachments/assets/b488d501-c6da-4bd9-ab25-63d2789e2aaa)
+![Screenshot_2025-04-21_16-59-38](https://github.com/user-attachments/assets/370e1585-f9ce-4288-9275-f7cd1e46542d)
+
 
 ## GetDateFromTX
 
