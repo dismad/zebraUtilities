@@ -41,14 +41,15 @@ fi
 #Check vouts
 nullCheck=$(./txDetails.sh $txID | jq .vout[])
 if [[ -n "$nullCheck" ]] && [[ "$nullCheck" != "" ]];then
-    #Case were tx has both vins and outs
+    #Case where tx has both vins and outs
     if [[ $isSapling -eq 1 ]];then
        isShieldedOut=1
     fi
-    voutSum=$(./txDetails.sh $txID | jq -r '.vout[] | .valueZat' | awk '{s+=$1} END {print s}')
+    voutSum=$(./txDetails.sh $txID | jq -r '.vout[] | .valueZat' | awk '{s+=$1} END {OFMT="%f";print s}')
     #If coinbase, add lockbox portion see line 63
 else
    isShieldedOut=1
+   voutSum=0
 fi
 
 #Check vins
@@ -64,6 +65,7 @@ if [[ -n "$nullCheck" ]] && [[ "$nullCheck" != "" ]];then
     else
         if [[ "$nullCheck" == "[]" ]];then
            isShieldedIn=1
+           vinSum=0
         else
            #loop through vins
            length=$(./txDetails.sh $txID | jq -r '.vin | length')
@@ -76,11 +78,12 @@ if [[ -n "$nullCheck" ]] && [[ "$nullCheck" != "" ]];then
 		   do
 		   	tempIndex=$(./txDetails.sh $txID | jq .vin[$index].vout)
 		   	vinSum=$(./txDetails.sh $txID | jq .vin[$index].txid | xargs -n1 ./txDetails.sh | jq .vout[$tempIndex].valueZat)
-		        echo $vinSum >> temp.md #| awk '{s+=$1} END {print s}')
+		       	echo $vinSum >> temp.md
 		        index=$((($index + 1)))
+			
 		   done
            
-           vinSum=$(cat temp.md | awk '{s+=$1} END {print s}')
+           vinSum=$(cat temp.md | awk '{s+=$1} END {OFMT="%f";print s}')
         fi
     fi
 else
@@ -150,11 +153,11 @@ fi
 #echo "voutSum: $voutSum"
 #echo "outValueBalance: $outValueBalance"
  
-#finalOut=$(echo "$voutSum + $outValueBalance" | bc )
-#finalIn=$(echo "$vinSum + $inValueBalance" | bc )
+finalOut=$(echo "$voutSum + $outValueBalance" | bc )
+finalIn=$(echo "$vinSum + $inValueBalance" | bc )
 
-finalOut=$((( $voutSum + $outValueBalance )))
-finalIn=$((( $vinSum + $inValueBalance )))
+#finalOut=$((( $voutSum + $outValueBalance )))
+#finalIn=$((( $vinSum + $inValueBalance )))
 
 
 #if Coinbase tx, swap signs 
@@ -172,4 +175,3 @@ finalIn=$(echo "scale=2; $finalIn / 100000000" | bc)
 #echo "Out : $voutSum ZEC"
 #echo "-------------------"
 echo "$fee Zats"
-
