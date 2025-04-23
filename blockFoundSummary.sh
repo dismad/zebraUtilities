@@ -53,8 +53,9 @@ do
         # Divide the difference by 3600 to calculate hours/ 60 for minutes
         answer=$(bc <<< "scale=2 ; $difference/60")
         testTime=$(date +%R)
-
-        blockSize=$(./toCurl.sh getblockcount | xargs ./toCurl.sh getblock | jq .size)
+        
+        blockSize=$(./toCurl.sh getblockcount | xargs -I {} echo {} 2 | xargs ./toCurl.sh getblock | jq .size)
+        #blockSize=$(./toCurl.sh getblockcount | xargs ./toCurl.sh getblock | jq .size)
 
         # Display message with new block number
         echo
