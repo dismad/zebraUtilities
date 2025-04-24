@@ -68,10 +68,9 @@ test=$(sed -E 's/([+-]?[0-9.]+)[eE]\+?(-?)([0-9]+)/(\1*10^\2\3)/g' <<<"$valueOut
 test2=$(sed -E 's/([+-]?[0-9.]+)[eE]\+?(-?)([0-9]+)/(\1*10^\2\3)/g' <<<"$valueOut2" | bc)
 test3=$(sed -E 's/([+-]?[0-9.]+)[eE]\+?(-?)([0-9]+)/(\1*10^\2\3)/g' <<<"$valueOut3" | bc)
 
-#echo "$test | $test2 | $test3 | $lockbox"
+
 
 # Filter
-
 s1=0 #saplingSpend
 s2=0 #saplingOutput
 ss=0 #sapling
@@ -79,7 +78,6 @@ t1=0 #transparent
 c1=0 #sprout
 n1=0 #orchard
 
-#result="$block | $txID "
 
 if [[ "$transparent" == *"\"pubkeyhash\""* ]] || [[ "$transparent" == *"\"scripthash\""* ]]; then
     t1=1
@@ -122,11 +120,6 @@ else
 fi
 
 myResult=""
-
-#echo "test: $test"
-#echo "test2: $test2"
-#echo "test3: $test3"
-#echo "lockbox: $lockbox"
 
 
 
@@ -175,6 +168,74 @@ else
 fi
 
 
+#Find length of valueOut to adjust for even pad spacing
+padding=15
+len=${#valueOut}
+test=$(( $padding - $len ))
+mypad=""
+while [[ $test -gt 0 ]]
+do
+    mypad="$mypad "
+    test=$(( $test -1 ))
+done
+
+
+# Get Fee
+fee=$(./getTXfee.sh $txID)
+
+# Get transferTX count
+t=$(./txDetails.sh $txID | jq -r '.vout | length' | paste -sd+ | bc)
+o=$(./txDetails.sh $txID | jq .orchard | jq -r '.actions | length' | paste -sd+ | bc)
+s=$(./txDetails.sh $txID | jq -r ' .vShieldedOutput | length ' | paste -sd+ | bc)
+
+myTransferCount=$(echo "$t + $o + $s" | bc)
+
+#Find Length of Fee to adjust for even pad spacing
+padding2=15
+len=${#fee}
+test2=$(( $padding2 - $len ))
+mypad2=""
+while [[ $test2 -gt 0 ]]
+do
+    mypad2="$mypad2 "
+    test2=$(( $test2 -1 ))
+done
+
+
+#Find Length of TransferCounts for even pad spacing
+padding3=4
+len=${#myTransferCount}
+test3=$(( $padding3 - $len ))
+mypad3=""
+
+while [[ $test3 -gt 0 ]]
+do
+	mypad3="$mypad3 "
+	test3=$(( $test3 -1 ))
+done
+
+
+
+# Get date/time
+isZebra=$(./toCurl.sh getinfo | jq .subversion | grep -o Zebra)
+
+if [[ "$isZebra" == "Zebra" ]];
+then
+	#if in mempool
+        isInMempool=$(./inMempool.sh $txID)
+	if [[ "$isInMempool" -eq 1 ]] ;then
+
+		testTime="In mempool"
+	else
+                now=$(echo $rawTx | jq .height | xargs -n1 ./toCurl.sh getblock | jq .time)
+                testTime=$(date -d @$now +%c)
+	fi
+else
+	#zcashd case
+	now=$(echo $rawTx | jq .time)
+        testTime=$(date -d @$now +%c)
+fi
+
 #Black        0;30     Dark Gray     1;30
 #Red          0;31     Light Red     1;31
 #Green        0;32     Light Green   1;32
@@ -198,67 +259,5 @@ LIGHTPURPLE='\033[1;35m'
 LIGHTRED='\033[1;31m'
 YELLOW='\033[1;33m'
 
-#Find length of valueOut to adjust for even pad spacing
-padding=15
-len=${#valueOut}
-test=$(( $padding - $len ))
-mypad=""
-while [[ $test -gt 0 ]]
-do
-    mypad="$mypad "
-    test=$(( $test -1 ))
-done
 
-
-# Get Fee
-
-#ifInsight=$(zcash-cli getexperimentalfeatures | jq)
-
-
-#if [ "$ifInsight" == "[]" ]; then
-    #fee="Fee n/a"
-#else
-    fee=$(./getTXfee.sh $txID)
-#fi
-
-# Get transferTX count
-t=$(./txDetails.sh $txID | jq -r '.vout | length' | paste -sd+ | bc)
-o=$(./txDetails.sh $txID | jq .orchard | jq -r '.actions | length' | paste -sd+ | bc)
-s=$(./txDetails.sh $txID | jq -r ' .vShieldedOutput | length ' | paste -sd+ | bc)
-
-myTransferCount=$(echo "$t + $o + $s" | bc)
-
-#Find Length of Fee to adjust for even pad spacing
-padding2=17
-len=${#fee}
-test2=$(( $padding2 - $len ))
-mypad2=""
-while [[ $test2 -gt 0 ]]
-do
-    mypad2="$mypad2 "
-    test2=$(( $test2 -1 ))
-done
-
-
-# Get date/time
-isZebra=$(./toCurl.sh getinfo | jq .subversion | grep -o Zebra)
-
-if [[ "$isZebra" == "Zebra" ]];
-then
-	#if in mempool
-        isInMempool=$(./inMempool.sh $txID)
-	if [[ "$isInMempool" -eq 1 ]] ;then
-
-		testTime="In mempool"
-	else
-                now=$(echo $rawTx | jq .height | xargs -n1 ./toCurl.sh getblock | jq .time)
-                testTime=$(date -d @$now +%c)
-	fi
-else
-	#zcashd case
-	now=$(echo $rawTx | jq .time)
-        testTime=$(date -d @$now +%c)
-fi
-
-
-echo -e "${LIGHTRED}$testTime${NC} | ${CYAN}$block${NC} | ${GREEN}$txID${NC} | ${YELLOW}$myTransferCount${NC} | ${RED}$fee${NC}$mypad2 | ${LIGHTPURPLE}$valueOut${NC}$mypad | ${LIGHTBLUE}$myResult${NC}"
+echo -e "${LIGHTRED}$testTime${NC} | ${CYAN}$block${NC} | ${GREEN}$txID${NC} | ${YELLOW}$myTransferCount${NC}$mypad3 | ${RED}$fee${NC}$mypad2 | ${LIGHTPURPLE}$valueOut${NC}$mypad | ${LIGHTBLUE}$myResult${NC}"
