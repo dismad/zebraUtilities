@@ -102,6 +102,10 @@ if [[ "$isShieldedOut" -eq 1 ]];then
        outValueBalance=$(./txDetails.sh $txID | jq .vjoinsplit[].vpub_newZat | awk '{s+=$1} END {print s}')
     elif [[ "$isSapling" -eq 1 ]];then
         outValueBalance=$(./txDetails.sh $txID | jq .valueBalanceZat)
+        if [[ -n "$isOrchard" ]] && [[ "$lenO" -gt 4 ]];then
+                myOrchard=$(./txDetails.sh $txID | jq .orchard.valueBalanceZat)
+        	outValueBalance=$(echo "$outValueBalance + $myOrchard" | bc)
+	fi
     elif [[ -n "$isOrchard" ]] && [[ "$lenO" -gt 4 ]];then
         outValueBalance=$(./txDetails.sh $txID | jq .orchard.valueBalanceZat)    
     else
@@ -116,6 +120,10 @@ if [[ "$isShieldedIn" -eq 1 ]];then
    #   vinSum=$(./txDetails.sh $txID | jq .vjoinsplit[].vpub_newZat)
    if [[ "$isSapling" -eq 1 ]];then
        inValueBalance=$(./txDetails.sh $txID | jq .valueBalanceZat)
+        if [[ -n "$isOrchard" ]] && [[ "$lenO" -gt 4 ]];then
+              myOrchard=$(./txDetails.sh $txID | jq .orchard.valueBalanceZat)
+              inValueBalance=$(echo "$inValueBalance + $myOrchard" | bc)
+	fi
    elif [[ -n "$isOrchard" ]] && [[ "$lenO" -gt 4 ]];then
        inValueBalance=$(./txDetails.sh $txID | jq .orchard.valueBalanceZat)    
    else
