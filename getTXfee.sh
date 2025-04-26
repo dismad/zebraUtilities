@@ -9,6 +9,8 @@ isShieldedIn=0
 isOrchard=$(./txDetails.sh $txID | jq .orchard)
 lenO=${#isOrchard}
 
+
+
 #Check for Sapling
 isSaplingSpend=$(./txDetails.sh $txID | jq .vShieldedSpend)
 isSaplingOutput=$(./txDetails.sh $txID | jq .vShieldedOutput)
@@ -40,22 +42,28 @@ fi
 
 #Check vouts
 nullCheck=$(./txDetails.sh $txID | jq .vout[])
+
 if [[ -n "$nullCheck" ]] && [[ "$nullCheck" != "" ]];then
-    #Case where tx has both vins and outs
-    if [[ $isSapling -eq 1 ]];then
-       isShieldedOut=1
-    fi
+    
     voutSum=$(./txDetails.sh $txID | jq -r '.vout[] | .valueZat' | awk '{s+=$1} END {OFMT="%f";print s}')
     #If coinbase, add lockbox portion see line 63
+    #check for mix txids here
+    shieldCheck=$(./txDetails.sh $txID |  jq -r '.orchard.actions | length')
+
+    nullCheck=$(./txDetails.sh $txID | jq .vin[])
+    if [[ $shieldCheck -gt 0 ]] && [[ -n "$nullCheck" ]];then
+   	isShieldedOut=1
+    fi
 else
    isShieldedOut=1
    voutSum=0
 fi
 
 #Check vins
-nullCheck=$(./txDetails.sh $txID | jq .vin)
+nullCheck=$(./txDetails.sh $txID | jq .vin[])
 
 if [[ -n "$nullCheck" ]] && [[ "$nullCheck" != "" ]];then
+    
     isCoinbase=$(./txDetails.sh $txID | jq .vin[] | grep -o coinbase)
     if [[ "$isCoinbase" = "coinbase" ]];then
     	vinSum=$(./toCurl.sh getblocksubsidy | jq .totalblocksubsidy)
@@ -88,6 +96,7 @@ if [[ -n "$nullCheck" ]] && [[ "$nullCheck" != "" ]];then
     fi
 else
     isShieldedIn=1
+    vinSum=0
 fi
 
 # If Shielded, update Sums based on type of Shielding
@@ -95,10 +104,9 @@ outValueBalance=0 #voutSum
 inValueBalance=0  #vinSum
 
 #Check voutSum first
-#echo $isShieldedOut
+
 if [[ "$isShieldedOut" -eq 1 ]];then
     if [[ "$lenS" -gt 4 ]];then
-       echo "here"
        outValueBalance=$(./txDetails.sh $txID | jq .vjoinsplit[].vpub_newZat | awk '{s+=$1} END {print s}')
     elif [[ "$isSapling" -eq 1 ]];then
         outValueBalance=$(./txDetails.sh $txID | jq .valueBalanceZat)
@@ -111,7 +119,7 @@ if [[ "$isShieldedOut" -eq 1 ]];then
     else
         echo "debug"
     fi
-    outValueBalance=$(echo "$outValueBalance * -1" | bc) 
+    outValueBalance=$(echo "$outValueBalance * -1" | bc)
 fi
 
 #Check vinSum second
@@ -154,10 +162,8 @@ elif [[ "$isSapling" -eq 1 ]];then
 fi
 
 
-
 #echo "vinSum: $vinSum"
 #echo "inValueBalance: $inValueBalance"
-
 #echo "voutSum: $voutSum"
 #echo "outValueBalance: $outValueBalance"
  
