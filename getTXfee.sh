@@ -49,10 +49,11 @@ if [[ -n "$nullCheck" ]] && [[ "$nullCheck" != "" ]];then
     #If coinbase, add lockbox portion see line 63
     #check for mix txids here
     shieldCheck=$(./txDetails.sh $txID |  jq -r '.orchard.actions | length')
-
     nullCheck=$(./txDetails.sh $txID | jq .vin[])
     if [[ $shieldCheck -gt 0 ]] && [[ -n "$nullCheck" ]];then
    	isShieldedOut=1
+    elif [[ $isSapling -eq 1 ]] && [[ -n "$nullCheck" ]];then
+	isShieldedOut=1
     fi
 else
    isShieldedOut=1
@@ -93,6 +94,14 @@ if [[ -n "$nullCheck" ]] && [[ "$nullCheck" != "" ]];then
            
            vinSum=$(cat temp.md | awk '{s+=$1} END {OFMT="%f";print s}')
         fi
+
+	   shieldCheck=$(./txDetails.sh $txID |  jq -r '.orchard.actions | length')
+   	   nullCheck=$(./txDetails.sh $txID | jq .vout[])
+   	   if [[ $shieldCheck -gt 0 ]] && [[ -n "$nullCheck" ]];then
+       		 isShieldedIn=1
+   	   elif [[ $isSapling -eq 1 ]] && [[ -n "$nullCheck" ]];then
+       		 isShieldedIn=1
+   	   fi
     fi
 else
     isShieldedIn=1
@@ -138,6 +147,7 @@ if [[ "$isShieldedIn" -eq 1 ]];then
        echo "debug"
    fi
 fi
+
 
 if [[ "$isSapling" -eq 0 ]] && [[ -z $vinSum ]];then
     if [[ $inValueBalance -lt 0 ]];then
@@ -189,3 +199,4 @@ finalIn=$(echo "scale=2; $finalIn / 100000000" | bc)
 #echo "Out : $voutSum ZEC"
 #echo "-------------------"
 echo "$fee Zats"
+
