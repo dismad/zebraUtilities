@@ -26,4 +26,4 @@ else
         myCurl="curl -s -u $credentials --data-binary '{\"jsonrpc\": \"1.0\", \"id\":\"curltest\", \"method\": \"$command\", \"params\": [] }' -H 'content-type: application/json' http://127.0.0.1:$port/"
 fi
 
-eval $myCurl | jq .result
+eval "$myCurl" | jq .result
