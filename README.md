@@ -24,6 +24,9 @@ Can access Zebra RPC's using `toCurl.sh`or equivalent.
 * txDetails.sh                               // Display detailed info about any txid
 * visualizeMempool.sh                        // View amount/types of txid's in the mempool
 * zebraPeers.sh                              // Display connected peers to your node
+* viewTurnstileBlock.sh                      // View turnstile data given a block
+* viewTurnstileTaddr.sh                      // View turnstile data given a T address
+* viewTurnstileTXID.sh                       // View turnstile data given a txid
 ```
 
 ## DEV version
@@ -88,7 +91,7 @@ Then run `./blockFoundSummary.sh`
 
 ![Screenshot_2024-10-03_11-28-25](https://github.com/user-attachments/assets/bce305b0-a374-424c-8e31-45c0298f5095)
 
-## Example1
+### Example1
 
 `seq 2742068 2743220 | xargs -n1 ./toCurl.sh getblock | jq .difficulty | tee -a myDifficulty.md`
 
@@ -97,12 +100,27 @@ Then run `./blockFoundSummary.sh`
 
 ![myDiff](https://github.com/user-attachments/assets/f0552524-9020-4750-949e-ace9e81f934a)
 
-## Example2
+### Example2
 
 `./toCurl.sh getblockchaininfo | jq .upgrades | jq 'to_entries[]' | jq .value.activationheight | xargs -n1 ./getDateFromBlock.sh`
 
 
 ![Screenshot_2025-02-13_05-45-08](https://github.com/user-attachments/assets/6739094b-c46b-46a1-aa7e-23d47641ddab)
+
+## ViewTurnstileBlock
+
+### Example 1
+`./viewTurnstileBlock.sh 3078839`
+
+<img width="330" height="482" alt="Screenshot_2025-09-26_15-26-55" src="https://github.com/user-attachments/assets/e1f16485-7cb8-4c2e-baba-5e9b50f1fd66" />
+
+### Example 2
+
+`./viewTurnstileBlock.sh 3078839 true`
+
+<img width="1594" height="1078" alt="Screenshot_2025-09-26_15-27-12" src="https://github.com/user-attachments/assets/2b252868-3291-4fd7-bab6-f6a1e3b34632" />
+
+
 
 
 
