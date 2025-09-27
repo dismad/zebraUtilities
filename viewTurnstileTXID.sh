@@ -45,19 +45,19 @@ else
 
 	if [[ "$isSapling" == "1" ]] && [[ "$isOrchard" == "1" ]]; then
 		
-		echo "0 1 1"
+		echo "0 1 1 "
 
 	elif [[ "$isSapling" == "1" ]] && [[ "$isOrchard" == "0" ]]; then
 
-		echo "0 1 0"
+		echo "0 1 0 "
 
 	elif [[ "$isSapling" == "0" ]] && [[ "$isOrchard" == "1" ]]; then
 		
-		echo "0 0 1"
+		echo "0 0 1 "
 
 	elif [[ "$isSapling" == "0" ]] && [[ "$isOrchard" == "0" ]]; then
 	
-		echo "1 0 0"
+		echo "1 0 0 "
 	fi
 fi
 

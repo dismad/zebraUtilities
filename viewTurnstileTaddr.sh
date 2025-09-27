@@ -18,7 +18,7 @@ if [ -f turnstileData.md ]; then
 	rm turnstileData.md
 fi
 
-echo "Crunching data ..."
+echo "Finding address portrait ..."
 echo
 
 result=$(cat txids | xargs -I {} ./viewTurnstileTXID.sh {} "$debug" | tee turnstileData.md)
@@ -28,36 +28,31 @@ sCount=$(cat turnstileData.md | awk '{print $2}' | paste -sd+ | bc)
 oCount=$(cat turnstileData.md | awk '{print $3}' | paste -sd+ | bc)
 
 length=$(echo $result | wc -w)
+
 final=""
+index=9
+j=1
 
-echo $result
-echo
+if [ -f yessir.md ]; then
+	rm yessir.md
+fi
 
-index=18
-
-while [ $length -gt 0 ]; do
+while [ $index -lt $length ]; do
 	
-	#final=$(echo $result | cut -c1-18)
-        #remainder=$(( $length % 18 ))
+	echo $result | cut -c1-18 >> yessir.md
 
-	echo "Is index: $index less than length: $length?"
-	echo
+	temp=$( echo $result | cut -c1-18)
+	result=$( echo $result | cut -c18-)
 
-	if (( index < length )); then
-
-		temp=$( echo $result | cut -c1-$index)
-		result=$( echo $result | cut -c9-)
-
-		echo -e "$temp\r"
-		final=$( echo -e "$final$temp\r")
-		echo "final: $final"
-		index=$(( $index + 18 ))
-	fi
-	length=$(( $length - $index ))
+	j=$(( $j + 1 ))
+        index=$((  $j * 9 ))
 done
 
-echo $result | cut -c1-18
-echo
+echo $result >> yessir.md
+
+cat yessir.md
+
+
 echo
 echo "$taddr has $(cat txids | wc -l)" transactions
 echo
