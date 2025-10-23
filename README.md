@@ -71,19 +71,21 @@ Then run `./visualizeMempool.sh`
 
 You need the following scripts in a folder:
 ```
+toCurl.sh
 listBlockTXs.sh
 txDetails.sh
-getType.sh
-getTXfee.sh
+tx_type.sh
+getTXfeeII.sh
 drawBlock.sh
 blockFoundSummary.sh
 ```
 Then run `./blockFoundSummary.sh`
 
-![Screenshot_2025-04-21_12-55-22](https://github.com/user-attachments/assets/2976eab0-9825-4466-8220-7db46aad4db6)
+<img width="2218" height="716" alt="Screenshot_2025-10-22_20-49-26" src="https://github.com/user-attachments/assets/24bd8270-05d4-49d3-9565-00d9a5366331" />
 
 
-## ListTXs with getType
+
+## ListTXs with tx_type / getType
 
 ![Screenshot_2025-04-21_16-59-38](https://github.com/user-attachments/assets/370e1585-f9ce-4288-9275-f7cd1e46542d)
 
