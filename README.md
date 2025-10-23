@@ -16,8 +16,9 @@ Can access Zebra RPC's using `toCurl.sh`or equivalent.
 * getBlockCount.sh                           // Get current amount of mined blocks (Height)
 * getDateFromBlock.sh                        // Get the date/time a given block was mined
 * getDateFromTX.sh                           // Get the date/time a given transaction was mined
-* getTXfee.sh                                // Get the transaction fee of a given txid
-* getType.sh                                 // Get the type of transaction given a txid
+* getTXfeeII.sh                              // Get the transaction fee of a given txid (updated)
+* getType.sh                                 // Get the type of transaction given a txid (old)
+* tx_type.sh                                 // Get tye type of transaction given a txid (new)
 * listBestBlockTXs.sh                        // List the transactions of the top block
 * listBlockTXs.sh                            // List the transactions of a given block
 * listTXs.sh                                 // List all Tx's in any block interval
