@@ -200,8 +200,10 @@ LIGHTGREEN='\033[0;32m'
 LIGHTBLUE='\033[1;34m'
 LIGHTPURPLE='\033[1;35m'
 LIGHTRED='\033[1;31m'
+LIGHTGRAY='\033[0;37m'
 YELLOW='\033[1;33m'
 ORANGE='\033[0;33m'
+WHITE='\033[1;37m'
 
 #Find length of valueOut to adjust for even pad spacing
 padding=15
@@ -223,6 +225,7 @@ done
 if [ "$isDebug" == "true" ]; then
     fee="Fee n/a"
 else
+    #fee=$(./getTXfeeTESTER.sh $txID)
     fee=$(./getTXfeeII.sh $txID)
 fi
 
@@ -311,7 +314,8 @@ if [ "$isDebug" == "true" ]; then
 
 	echo -e "$testTime | $block | $txID | $myTransferCount$mypad3 | $fee | $finalTransparent$mypad2 | $finalSapling$mypad4  | $finalOrchard$mypad5  | $myResult | $isCoinbase"
 else 
-	echo -e "${LIGHTRED}$testTime${NC} | ${CYAN}$block${NC} | ${GREEN}$txID${NC} | ${YELLOW}$myTransferCount${NC}$mypad3 | ${RED}$fee${NC}$mypad6 | ${LIGHTPURPLE}$valueOut${NC}$mypad | ${LIGHTBLUE}$myResult${NC} | ${ORANGE}$isCoinbase${NC}"
+	#echo -e "${LIGHTRED}$testTime${NC} | ${CYAN}$block${NC} | ${GREEN}$txID${NC} | ${YELLOW}$myTransferCount${NC}$mypad3 | ${RED}$fee${NC}$mypad6 | ${LIGHTPURPLE}$valueOut${NC}$mypad | ${LIGHTBLUE}$myResult${NC} | ${ORANGE}$isCoinbase${NC}"
+	echo -e "${LIGHTRED}$testTime${NC} | ${CYAN}$block${NC} | ${GREEN}$txID${NC} | ${YELLOW}$myTransferCount${NC}$mypad3 | ${RED}$fee${NC}$mypad6 | ${WHITE}$finalTransparent$mypad2${NC} | ${LIGHTGREEN}$finalSapling$mypad4${NC} | ${LIGHTGRAY}$finalOrchard$mypad5${NC} | ${LIGHTBLUE}$myResult${NC} | ${ORANGE}$isCoinbase${NC}"
 fi
 
 rm txidJSON
