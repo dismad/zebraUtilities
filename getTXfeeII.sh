@@ -99,7 +99,7 @@ if [[ -n "$nullCheck" ]] && [[ "$nullCheck" != "" ]];then
 
 	   shieldCheck=$(cat txidJSON | jq -r '.orchard.actions | length')
    	   nullCheck=$(cat txidJSON | jq .vout[])
-   	   if [[ $shieldCheck -gt 0 ]] && [[ -n "$nullCheck" ]];then
+           if [[ $shieldCheck -gt 0 ]] && [[ -n "$nullCheck" ]] && [[ $vinSum -eq 0 ]];then
        		 isShieldedIn=1
    	   elif [[ $isSapling -eq 1 ]] && [[ -n "$nullCheck" ]];then
        		 isShieldedIn=1
@@ -205,3 +205,4 @@ echo "$fee Zats"
 if [ -f temp.md ]; then
     rm temp.md
 fi
+
