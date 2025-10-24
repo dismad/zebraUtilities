@@ -81,7 +81,8 @@ blockFoundSummary.sh
 ```
 Then run `./blockFoundSummary.sh`
 
-<img width="2218" height="716" alt="Screenshot_2025-10-22_20-49-26" src="https://github.com/user-attachments/assets/24bd8270-05d4-49d3-9565-00d9a5366331" />
+<img width="2742" height="598" alt="Screenshot_2025-10-23_21-22-45" src="https://github.com/user-attachments/assets/8ea77d14-dbba-4994-a102-47f72f3374a3" />
+
 
 
 
