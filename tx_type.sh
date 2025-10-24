@@ -290,6 +290,16 @@ do
     test6=$(( $test6 -1 ))
 done
 
+padding7=10
+len=${#lockbox}
+test7=$(( $padding7 - $len ))
+mypad=""
+while [[ $test7 -gt 0 ]]
+do
+    mypad7="$mypad7 "
+    test7=$(( $test7 -1 ))
+done
+
 
 
 # Get date/time
@@ -315,7 +325,7 @@ if [ "$isDebug" == "true" ]; then
 	echo -e "$testTime | $block | $txID | $myTransferCount$mypad3 | $fee | $finalTransparent$mypad2 | $finalSapling$mypad4  | $finalOrchard$mypad5  | $myResult | $isCoinbase"
 else 
 	#echo -e "${LIGHTRED}$testTime${NC} | ${CYAN}$block${NC} | ${GREEN}$txID${NC} | ${YELLOW}$myTransferCount${NC}$mypad3 | ${RED}$fee${NC}$mypad6 | ${LIGHTPURPLE}$valueOut${NC}$mypad | ${LIGHTBLUE}$myResult${NC} | ${ORANGE}$isCoinbase${NC}"
-	echo -e "${LIGHTRED}$testTime${NC} | ${CYAN}$block${NC} | ${GREEN}$txID${NC} | ${YELLOW}$myTransferCount${NC}$mypad3 | ${RED}$fee${NC}$mypad6 | ${WHITE}$finalTransparent$mypad2${NC} | ${LIGHTGREEN}$finalSapling$mypad4${NC} | ${LIGHTGRAY}$finalOrchard$mypad5${NC} | ${LIGHTBLUE}$myResult${NC} | ${ORANGE}$isCoinbase${NC}"
+	echo -e "${LIGHTRED}$testTime${NC} | ${CYAN}$block${NC} | ${GREEN}$txID${NC} | ${YELLOW}$myTransferCount${NC}$mypad3 | ${RED}$fee${NC}$mypad6 | ${LIGHTPURPLE}$lockbox${NC}$mypad7 | ${WHITE}$finalTransparent$mypad2${NC} | ${LIGHTGREEN}$finalSapling$mypad4${NC} | ${LIGHTGRAY}$finalOrchard$mypad5${NC} | ${LIGHTBLUE}$myResult${NC} | ${ORANGE}$isCoinbase${NC}"
 fi
 
 rm txidJSON
