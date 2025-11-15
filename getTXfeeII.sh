@@ -21,18 +21,29 @@ isSapling=0
 if [[ -z "$isSaplingSpend" ]] || [[ "$isSaplingSpend" == "[]" ]]; then
     #no Sapling Spend
     isSapling=0
+    if [[ -z "$isSaplingOutput" ]] || [[ "$isSaplingOutput" == "[]" ]]; then
+    
+    	#echo "test"
+    	#no Sapling Output
+    	isSapling=0
+    else
+    	isSapling=1
+    	#echo "Sapling Output tx"
+    fi
 else
     isSapling=1
     #echo "Sapling Spend tx"
 fi
 
-if [[ -z "$isSaplingOutput" ]] || [[ "$isSaplingOutput" == "[]" ]]; then
-    #no Sapling Output
-    isSapling=0
-else
-    isSapling=1
-    #echo "Sapling Output tx"
-fi
+#if [[ -z "$isSaplingOutput" ]] || [[ "$isSaplingOutput" == "[]" ]]; then
+#    
+#    echo "test"
+#    #no Sapling Output
+#    isSapling=0
+#else
+#    isSapling=1
+#    #echo "Sapling Output tx"
+#fi
 
 #Check for Sprout
 isSprout=$(cat txidJSON | jq .vjoinsplit)
@@ -68,10 +79,23 @@ nullCheck=$(cat txidJSON | jq .vin[])
 if [[ -n "$nullCheck" ]] && [[ "$nullCheck" != "" ]];then
     
     isCoinbase=$(cat txidJSON | jq .vin[] | grep -o coinbase)
-    if [[ "$isCoinbase" = "coinbase" ]];then
-    	vinSum=$(./toCurl.sh getblocksubsidy | jq .totalblocksubsidy)
-    	vinSum=$(echo "($vinSum * 100000000)/1" | bc)
-        lockbox=$(./toCurl.sh getblocksubsidy | jq .lockboxstreams[].valueZat)
+    if [[ "$isCoinbase" == "coinbase" ]];then
+        #1046400 canopy starts subsidy
+        cBlock=$(cat txidJSON | jq .height)
+        if [[ "$cBlock" -ge 1046400 ]];then
+    		vinSum=$(./toCurl.sh getblocksubsidy $cBlock | jq .totalblocksubsidy)
+                vinSum=$(echo "($vinSum * 100000000)/1" | bc)
+                #NU6 lockbox starts
+                if [[ "$cBlock" -ge 2726400 ]];then
+        		lockbox=$(./toCurl.sh getblocksubsidy $cBlock | jq .lockboxstreams[].valueZat)
+	        else
+			#lockbox=$(./toCurl.sh getblocksubsidy 2726399 | jq .fundingstreams[].valueZat)
+			lockbox=0
+		fi
+        else
+		vinSum=0
+                lockbox=0
+	fi
         voutSum=$(echo "$voutSum + $lockbox" | bc )
     else
         if [[ "$nullCheck" == "[]" ]];then
@@ -87,13 +111,13 @@ if [[ -n "$nullCheck" ]] && [[ "$nullCheck" != "" ]];then
 
 	   while [[ "$index" -lt "$length" ]]
 		   do
+			
 		   	tempIndex=$(cat txidJSON | jq .vin[$index].vout)
 		   	vinSum=$(cat txidJSON | jq .vin[$index].txid | xargs -n1 ./txDetails.sh | jq .vout[$tempIndex].valueZat)
 		       	echo $vinSum >> temp.md
 		        index=$((($index + 1)))
 			
 		   done
-           
            vinSum=$(cat temp.md | awk '{s+=$1} END {OFMT="%f";print s}')
         fi
 
@@ -103,6 +127,8 @@ if [[ -n "$nullCheck" ]] && [[ "$nullCheck" != "" ]];then
        		 isShieldedIn=1
    	   elif [[ $isSapling -eq 1 ]] && [[ -n "$nullCheck" ]];then
        		 isShieldedIn=1
+           #elif [[ "$lenS" -gt 4 ]];then
+           #      isShieldedIn=1
    	   fi
     fi
 else
@@ -114,11 +140,17 @@ fi
 outValueBalance=0 #voutSum
 inValueBalance=0  #vinSum
 
+#echo "isShieldedOut: $isShieldedOut"
+#echo "isShieldedIn : $isShieldedIn"
+
+
 #Check voutSum first
 
 if [[ "$isShieldedOut" -eq 1 ]];then
     if [[ "$lenS" -gt 4 ]];then
-       outValueBalance=$(cat txidJSON | jq .vjoinsplit[].vpub_newZat | awk '{s+=$1} END {print s}')
+       #vpub_oldZat vs newZat check
+       outValueBalance=$(cat txidJSON | jq .vjoinsplit[].vpub_oldZat | awk '{s+=$1} END {print s}')
+       outValueBalance=$(echo "$outValueBalance * -1" | bc)
     elif [[ "$isSapling" -eq 1 ]];then
         outValueBalance=$(cat txidJSON | jq .valueBalanceZat)
         if [[ -n "$isOrchard" ]] && [[ "$lenO" -gt 4 ]];then
@@ -130,13 +162,18 @@ if [[ "$isShieldedOut" -eq 1 ]];then
     else
         echo "debug"
     fi
+ 
     outValueBalance=$(echo "$outValueBalance * -1" | bc)
 fi
 
 #Check vinSum second
 if [[ "$isShieldedIn" -eq 1 ]];then
-   #if [ "$lenS" -gt 2 ];then
-   #   vinSum=$(cat txidJSON | jq .vjoinsplit[].vpub_newZat)
+	#echo "lenS: $lenS"
+   if [ "$lenS" -gt 4 ];then
+      #echo "test"
+      vinSum=$(cat txidJSON | jq .vjoinsplit[].vpub_newZat | awk '{s+=$1} END {print s}')
+   fi
+  
    if [[ "$isSapling" -eq 1 ]];then
        inValueBalance=$(cat txidJSON | jq .valueBalanceZat)
         if [[ -n "$isOrchard" ]] && [[ "$lenO" -gt 4 ]];then
@@ -147,9 +184,9 @@ if [[ "$isShieldedIn" -eq 1 ]];then
        inValueBalance=$(cat txidJSON | jq .orchard.valueBalanceZat)    
    else
        echo "debug"
+       
    fi
 fi
-
 
 if [[ "$isSapling" -eq 0 ]] && [[ -z $vinSum ]];then
     if [[ $inValueBalance -lt 0 ]];then
@@ -173,6 +210,12 @@ elif [[ "$isSapling" -eq 1 ]];then
     fi 
 fi
 
+if [[ "$isCoinbase" = "coinbase" ]];then
+	outValueBalance=0
+        inValueBalance=0
+        vinSum=0
+	voutSum=0
+fi
 
 #echo "vinSum: $vinSum"
 #echo "inValueBalance: $inValueBalance"
@@ -182,6 +225,8 @@ fi
 finalOut=$(echo "$voutSum + $outValueBalance" | bc )
 finalIn=$(echo "$vinSum + $inValueBalance" | bc )
 
+#echo "finalOut: $finalOut"
+#echo "finalIn : $finalIn"
 #finalOut=$((( $voutSum + $outValueBalance )))
 #finalIn=$((( $vinSum + $inValueBalance )))
 
