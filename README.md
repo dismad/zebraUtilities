@@ -111,7 +111,7 @@ Then run `./blockFoundSummary.sh`
 
 ### Example2
 
-`./toCurl.sh getblockchaininfo | jq .upgrades | jq 'to_entries[]' | jq .value.activationheight | xargs -n1 ./getDateFromBlock.sh`
+`./toCurl.sh getblockchaininfo | jq '.upgrades | to_entries[] | .value.activationheight' | xargs -n1 ./getDateFromBlock.sh`
 
 
 ![Screenshot_2025-02-13_05-45-08](https://github.com/user-attachments/assets/6739094b-c46b-46a1-aa7e-23d47641ddab)
