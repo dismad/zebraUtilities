@@ -21,6 +21,7 @@ Can access Zebra RPC's using `toCurl.sh`or equivalent.
 * tx_type.sh                                 // Get tye type of transaction given a txid (new)
 * listBestBlockTXs.sh                        // List the transactions of the top block
 * listBlockTXs.sh                            // List the transactions of a given block
+* listBlockFee.sh                            // List the total fees of a given block
 * listTXs.sh                                 // List all Tx's in any block interval
 * txDetails.sh                               // Display detailed info about any txid
 * visualizeMempool.sh                        // View amount/types of txid's in the mempool
@@ -84,6 +85,10 @@ Then run `./blockFoundSummary.sh`
 <img width="2742" height="598" alt="Screenshot_2025-10-23_21-22-45" src="https://github.com/user-attachments/assets/8ea77d14-dbba-4994-a102-47f72f3374a3" />
 
 
+## List Fees of a given Block
+
+
+<img width="888" height="284" alt="Screenshot_2025-11-18_20-43-11" src="https://github.com/user-attachments/assets/777076d6-9c99-48f8-948d-c248a8e2a055" />
 
 
 ## ListTXs with tx_type / getType
