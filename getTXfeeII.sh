@@ -149,8 +149,13 @@ inValueBalance=0  #vinSum
 if [[ "$isShieldedOut" -eq 1 ]];then
     if [[ "$lenS" -gt 4 ]];then
        #vpub_oldZat vs newZat check
-       outValueBalance=$(cat txidJSON | jq .vjoinsplit[].vpub_oldZat | awk '{s+=$1} END {print s}')
-       outValueBalance=$(echo "$outValueBalance * -1" | bc)
+       temp=$(cat txidJSON | jq .valueBalanceZat)
+       if [[ "$temp" -ne 0 ]];then
+       	    outValueBalance=$temp
+       else
+       		outValueBalance=$(cat txidJSON | jq .vjoinsplit[].vpub_oldZat | awk '{s+=$1} END {print s}')
+       		outValueBalance=$(echo "$outValueBalance * -1" | bc)
+       fi
     elif [[ "$isSapling" -eq 1 ]];then
         outValueBalance=$(cat txidJSON | jq .valueBalanceZat)
         if [[ -n "$isOrchard" ]] && [[ "$lenO" -gt 4 ]];then
@@ -187,6 +192,7 @@ if [[ "$isShieldedIn" -eq 1 ]];then
        
    fi
 fi
+
 
 if [[ "$isSapling" -eq 0 ]] && [[ -z $vinSum ]];then
     if [[ $inValueBalance -lt 0 ]];then
@@ -245,7 +251,13 @@ finalIn=$(echo "scale=2; $finalIn / 100000000" | bc)
 #echo "In  : $vinSum ZEC"
 #echo "Out : $voutSum ZEC"
 #echo "-------------------"
-echo "$fee Zats"
+if [[ $fee -eq 0 ]]; then
+	printf '%05.0f Zats' $fee
+else
+        echo "$fee Zats"
+fi
+
+#echo "$fee Zats"
 
 if [ -f temp.md ]; then
     rm temp.md

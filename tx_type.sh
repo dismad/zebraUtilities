@@ -3,6 +3,7 @@
 txID="${1}"   #1 represent 1st argument
 isDebug="${2}"   #2 represent 1st argument
 
+
 ./toCurl.sh getrawtransaction $txID 1 > txidJSON
 
 txJSON=$(cat txidJSON | jq)
@@ -15,11 +16,8 @@ block=$(cat txidJSON | jq .height)
 
 transparent=$(cat txidJSON | jq .vout[].scriptPubKey.type)
 transparent=("${transparent[@]}")
-
 transparent2=$(cat txidJSON | jq .vin[].txid | wc -l )
-
 transparent3=$(cat txidJSON | jq .vout[].value)
-
 sprout=$(cat txidJSON | jq .vjoinsplit)
 sapling1=$(cat txidJSON | jq .vShieldedSpend)
 sapling2=$(cat txidJSON | jq .vShieldedOutput)
@@ -42,7 +40,8 @@ if [ -n "$isCoinbase" ] && [ "$isCoinbase" != "[]" ];then
         lockbox=$(./toCurl.sh getblocksubsidy | jq .lockboxstreams[].valueZat)
         isCoinbase="IsCoinbase"
 else
-	lockbox="0"
+        lockbox=$(printf '%0f' 0.0)
+	#lockbox="0"
 fi
 
 
@@ -178,7 +177,6 @@ else
     :
 fi
 
-
 #Black        0;30     Dark Gray     1;30
 #Red          0;31     Light Red     1;31
 #Green        0;32     Light Green   1;32
@@ -205,27 +203,11 @@ YELLOW='\033[1;33m'
 ORANGE='\033[0;33m'
 WHITE='\033[1;37m'
 
-#Find length of valueOut to adjust for even pad spacing
-padding=15
-len=${#valueOut}
-test=$(( $padding - $len ))
-mypad=""
-while [[ $test -gt 0 ]]
-do
-    mypad="$mypad "
-    test=$(( $test -1 ))
-done
-
-
-# Get Fee
-
-
 
 
 if [ "$isDebug" == "true" ]; then
     fee="Fee n/a"
 else
-    #fee=$(./getTXfeeTESTER.sh $txID)
     fee=$(./getTXfeeII.sh $txID)
 fi
 
@@ -236,78 +218,8 @@ s=$(cat txidJSON | jq -r ' .vShieldedOutput | length ' | paste -sd+ | bc)
 
 myTransferCount=$(echo "$t + $o + $s" | bc)
 
-#Find Length of Fee to adjust for even pad spacing
-padding2=13
-len=${#finalTransparent}
-test2=$(( $padding2 - $len ))
-mypad2=""
-while [[ $test2 -gt 0 ]]
-do
-    mypad2="$mypad2 "
-    test2=$(( $test2 -1 ))
-done
-
-
-#Find Length of TransferCounts for even pad spacing
-padding3=4
-len=${#myTransferCount}
-test3=$(( $padding3 - $len ))
-mypad3=""
-
-while [[ $test3 -gt 0 ]]
-do
-	mypad3="$mypad3 "
-	test3=$(( $test3 -1 ))
-done
-
-padding4=14
-len=${#finalSapling}
-test4=$(( $padding4 - $len ))
-mypad4=""
-while [[ $test4 -gt 0 ]]
-do
-    mypad4="$mypad4 "
-    test4=$(( $test4 -1 ))
-done
-
-padding5=14
-len=${#finalOrchard}
-test5=$(( $padding5 - $len ))
-mypad5=""
-while [[ $test5 -gt 0 ]]
-do
-    mypad5="$mypad5 "
-    test5=$(( $test5 -1 ))
-done
-
-padding6=17
-len=${#fee}
-test6=$(( $padding6 - $len ))
-mypad6=""
-while [[ $test6 -gt 0 ]]
-do
-    mypad6="$mypad6 "
-    test6=$(( $test6 -1 ))
-done
-
-padding7=10
-len=${#lockbox}
-test7=$(( $padding7 - $len ))
-mypad=""
-while [[ $test7 -gt 0 ]]
-do
-    mypad7="$mypad7 "
-    test7=$(( $test7 -1 ))
-done
-
-
 
 # Get date/time
-##isZebra=$(./toCurl.sh getinfo | jq .subversion | grep -o Zebra)
-
-##if [[ "$isZebra" == "Zebra" ]];
-##then
-	#if in mempool
 isInMempool=$(./inMempool.sh $txID)
 if [[ "$isInMempool" -eq 1 ]] ;then
 
@@ -317,15 +229,23 @@ else
         testTime=$(date -d @$now +%c)
 fi
 
+#Find length of vars to adjust for even pad spacing
+mypad=$(./normalizePadding.sh 16 $valueOut)
+mypad2=$(./normalizePadding.sh 16 $finalTransparent)
+mypad3=$(./normalizePadding.sh 4 $myTransferCount)
+mypad4=$(./normalizePadding.sh 16 $finalSapling)
+mypad5=$(./normalizePadding.sh 16 $finalOrchard)
+mypad6=$(./normalizePadding.sh 12 $fee)
+mypad7=$(./normalizePadding.sh 10 $lockbox)
+mypad8=$(./normalizePadding.sh 27 $myResult)
 
-#txID=$(cat txidJSON | jq .txid)
+
 
 if [ "$isDebug" == "true" ]; then
 
 	echo -e "$testTime | $block | $txID | $myTransferCount$mypad3 | $fee | $finalTransparent$mypad2 | $finalSapling$mypad4  | $finalOrchard$mypad5  | $myResult | $isCoinbase"
 else 
-	#echo -e "${LIGHTRED}$testTime${NC} | ${CYAN}$block${NC} | ${GREEN}$txID${NC} | ${YELLOW}$myTransferCount${NC}$mypad3 | ${RED}$fee${NC}$mypad6 | ${LIGHTPURPLE}$valueOut${NC}$mypad | ${LIGHTBLUE}$myResult${NC} | ${ORANGE}$isCoinbase${NC}"
-	echo -e "${LIGHTRED}$testTime${NC} | ${CYAN}$block${NC} | ${GREEN}$txID${NC} | ${YELLOW}$myTransferCount${NC}$mypad3 | ${RED}$fee${NC}$mypad6 | ${LIGHTPURPLE}$lockbox${NC}$mypad7 | ${WHITE}$finalTransparent$mypad2${NC} | ${LIGHTGREEN}$finalSapling$mypad4${NC} | ${LIGHTGRAY}$finalOrchard$mypad5${NC} | ${LIGHTBLUE}$myResult${NC} | ${ORANGE}$isCoinbase${NC}"
+	echo -e "${LIGHTRED}$testTime${NC} | ${CYAN}$block${NC} | ${GREEN}$txID${NC} | ${YELLOW}$myTransferCount${NC}$mypad3 | ${RED}$fee${NC}$mypad6 | ${LIGHTPURPLE}$lockbox${NC}$mypad7 | ${WHITE}$finalTransparent$mypad2${NC} | ${LIGHTGREEN}$finalSapling$mypad4${NC} | ${LIGHTGRAY}$finalOrchard$mypad5${NC} | ${LIGHTBLUE}$myResult$mypad8${NC} | ${ORANGE}$isCoinbase${NC}"
 fi
 
 rm txidJSON
