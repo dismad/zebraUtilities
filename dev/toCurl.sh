@@ -1,14 +1,20 @@
 #!/bin/bash
 
-command="${1}"   #1 represent 1st argument
-arg1="${2}"      #2 represent 2nd argument
-arg2="${3}"      #3 represents 3rd argument
-arg3="${4}"      #4 represents 4th argument
-arg4="${5}"      #4 represents 4th argument
-arg5="${6}"      #4 represents 4th argument
+# Dry-run support at the very start
+if [ "${1}" = "--dry-run" ] || [ "${1}" = "-n" ]; then
+    dry_run=1
+    shift
+fi
 
+method="$1"
+shift
 
-if pgrep "runzenith" > /dev/null; then
+if [ -z "$method" ]; then
+    echo "Usage: $0 [--dry-run] <method> [param1] [param2] ..."
+    exit 1
+fi
+
+if pgrep "zenithserver" > /dev/null; then
 
       # Zenith RPC
 	user="user"           #set your  username
@@ -16,36 +22,84 @@ if pgrep "runzenith" > /dev/null; then
 	port="8234" 
 else
 	# Zebra
-	user="__cookie__"                                     #set your  username
-	pw=""                                                 #set your  pw
-	port="8232"                                           #set your port 
+	user="__cookie__"                                       #set your  username
+	pw=$(cat /var/lib/zebrad-rpc/.cookie | cut -d ":" -f2-) #set the location of your cookie
+      #set your  pw
+	port="8232"                                             #set your port 
 fi
 
-
+#Zallet
+#port="8237"
 credentials="$user:$pw"
 
-# Cases
-
-if [ "$command" == "getmetrics" ]; then
-	myCurl="curl -s --data-binary '{\"jsonrpc\": \"2.0\", \"id\":0, \"method\": \"$command\", \"params\": [] }' -H 'content-type: application/json' http://127.0.0.1:$port"
-elif [ "$command" == "getrawmempool" ]; then
-        myCurl="curl -s -u $credentials --data-binary '{\"jsonrpc\": \"1.0\", \"id\":\"curltest\", \"method\": \"$command\", \"params\": [$arg1] }' -H 'content-type: application/json' http://127.0.0.1:$port/"
-elif [ "$command" == "sendmany" ]; then
-	myCurl="curl -s -u $credentials --data-binary '{\"jsonrpc\": \"1.0\", \"id\":\"curltest\", \"method\": \"$command\", \"params\": [$arg1, \"$arg2\", [{\"address\": \"$arg3\", \"amount\": $arg4, \"memo\": \"$arg5\"}]] }' -H 'content-type: application/json' http://127.0.0.1:$port/"
-elif [ "$command" == "getaddresstxids" ] || [ "$command" == "getaddressbalance" ] || [ "$command" == "getaddressutxos" ] ; then
-	myCurl="curl -s -u $credentials --data-binary '{\"jsonrpc\": \"1.0\", \"id\":\"curltest\", \"method\": \"$command\", \"params\": [$arg1] }' -H 'content-type: application/json' http://127.0.0.1:$port/"
-elif [ -n "$arg1" ]; then
-        if [ -n "$arg2" ]; then
-		myCurl="curl -s -u $credentials --data-binary '{\"jsonrpc\": \"1.0\", \"id\":\"curltest\", \"method\": \"$command\", \"params\": [\"$arg1\", $arg2] }' -H 'content-type: application/json' http://127.0.0.1:$port/"
-        else
-		myCurl="curl -s -u $credentials --data-binary '{\"jsonrpc\": \"1.0\", \"id\":\"curltest\", \"method\": \"$command\", \"params\": [\"$arg1\"] }' -H 'content-type: application/json' http://127.0.0.1:$port/"
-        fi
+if [ "$method" = "getmetrics" ]; then
+    URL="http://127.0.0.1:$port"
 else
-        myCurl="curl -s -u $credentials --data-binary '{\"jsonrpc\": \"1.0\", \"id\":\"curltest\", \"method\": \"$command\", \"params\": [] }' -H 'content-type: application/json' http://127.0.0.1:$port/"
+    URL="http://127.0.0.1:$port/"
 fi
 
-#echo $myCurl
+# === Build params ===
+if [[ "$method" =~ ^(getaddresstxids|getaddressbalance|getaddressutxos|getaddressmempool)$ ]]; then
+    addr="${1:-}"
+    start="${2:-}"
+    end="${3:-}"
+    if [ -z "$start" ] && [ -z "$end" ]; then
+        params_json=$(jq -n --arg addr "$addr" '[ $addr ]')
+    else
+        params_json=$(jq -n \
+          --arg addr "$addr" \
+          --arg start "$start" \
+          --arg end "$end" '
+          [{
+            "addresses": (if $addr == "" then [] else [$addr] end),
+            start: (if $start != "" then ($start|tonumber) else empty end),
+            end:   (if $end   != "" then ($end|tonumber) else empty end)
+          }] | del(.[0].start, .[0].end | select(. == null))
+        ')
+    fi
+else
+    # Normal methods - keep numbers/booleans correct
+    params_json=$(printf '%s\n' "$@" | jq -R -s '
+      split("\n")[:-1] |
+      map(if . == "true" then true
+          elif . == "false" then false
+          elif test("^-?[0-9]+(\\.[0-9]+)?$") then tonumber
+          else . end)
+    ')
+    # Methods where FIRST param must stay a NUMBER (not forced to string)
+    if [[ "$method" =~ ^(getblockhash|getblocksubsidy|getblocktemplate)$ ]]; then
+        # do nothing - keep number
+        true
+    else
+        # Default: force first param to string (for getblock, getrawtransaction, etc.)
+        params_json=$(echo "$params_json" | jq 'if length > 0 and (.[0]|type=="number") then .[0]|=tostring else . end')
+    fi
+fi
 
-eval "$myCurl" | jq .result
+# === Dry-run ===
+if [ "${dry_run:-}" = "1" ]; then
+    echo "=== DRY RUN ==="
+    echo "Method : $method"
+    echo "Params JSON:"
+    echo "$params_json" | jq .
+    echo
+    echo "Full request:"
+    jq -n --arg method "$method" --argjson params "$params_json" '
+      { "jsonrpc": "2.0", "id": 1, "method": $method, "params": $params }
+    ' | jq .
+    exit 0
+fi
+
+# === Run ===
+if [ "$method" = "getmetrics" ]; then
+    jq -n --arg method "$method" --argjson params "$params_json" '
+      { "jsonrpc": "2.0", "id": 1, "method": $method, "params": $params }
+    ' | curl -s --json @- "$URL" | jq '.result // .'
+else
+    jq -n --arg method "$method" --argjson params "$params_json" '
+      { "jsonrpc": "2.0", "id": 1, "method": $method, "params": $params }
+    ' | curl -s -u "$credentials" --json @- "$URL" | jq '.result // .'
+fi
+
 
 
