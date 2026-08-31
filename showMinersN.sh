@@ -9,8 +9,10 @@ RPC_URL="${ZEBRA_RPC_URL:-http://127.0.0.1:18232}"
 
 if [ -t 1 ]; then
     ANON_LABEL=$'\033[38;5;99m▛\033[38;5;141m▜\033[0m \033[38;5;245manon\033[0m'
+    ZEBRA_LABEL=$'\033[38;5;255m🦓\033[0m \033[38;5;245mzebra\033[0m'
 else
     ANON_LABEL="anon"
+    ZEBRA_LABEL="zebra"
 fi
 
 # Zebra RPC cookie auth support (Zebra >= 2.0.0)
@@ -245,9 +247,9 @@ for (( h=CURRENT_HEIGHT; h>=START_HEIGHT; h-- )); do
 
     COINBASE_HEX=$(echo "$BLOCK_RESP" | jq -r '.result.tx[0].vin[0].coinbase // empty')
     MINER=$(extract_miner "$COINBASE_HEX")
-    if [ "$MINER" = "<anon>" ]; then
-        printf "%-12s %b\n" "$h" "$ANON_LABEL"
-    else
-        printf "%-12s %s\n" "$h" "$MINER"
-    fi
+    case "$MINER" in
+        "<anon>")  printf "%-12s %b\n" "$h" "$ANON_LABEL" ;;
+        "<zebra>") printf "%-12s %b\n" "$h" "$ZEBRA_LABEL" ;;
+        *)         printf "%-12s %s\n" "$h" "$MINER" ;;
+    esac
 done
